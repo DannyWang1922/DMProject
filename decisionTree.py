@@ -33,7 +33,7 @@ def create_decision_tree(data, attribute_list):
     split_attribute = attribute_list[split_attribute_index]
 
     print("create decision tree")
-    root_node = Node(index=0, attribute=split_attribute, attribute_idx=split_attribute_index, condition=split_attribute_value)
+    root_node = Node(index=0, attribute=split_attribute, attribute_idx=split_attribute_index, split_condition=split_attribute_value)
     tree = DecisionTree(root_node=root_node, attribute_list=attribute_list)
     # 递归生成所有节点
     tree.recurrent_node(data)
@@ -73,5 +73,23 @@ attribute_list = ['refund', 'marital', "income", "cheat"]
 # print(calculate_gini(data))
 # print(get_split_attribute_and_value(data)[0], get_split_attribute_and_value(data)[1])
 
-decision_tree = create_decision_tree(data, attribute_list)
-decision_tree.show_tree()
+# decision_tree = create_decision_tree(data, attribute_list)
+
+# save decision tree to txt file
+# tree_txt = str(decision_tree.save_tree())
+# with open('tree.txt', 'w') as f:
+#     f.write(tree_txt)
+
+# load decision tree from txt file
+with open('tree.txt', 'r') as f:
+    obj_str = f.read()
+    tree_list = eval(obj_str)
+
+
+decision_tree = DecisionTree.load_tree(tree_list)
+# decision_tree.show_tree()
+num_obj, num_correct, corr_rate = decision_tree.classify_dataset(data)
+print("The num of data set： ", num_obj, "Number of correctly classified samples： ",num_correct, "Classification accuracy:",corr_rate)
+
+
+

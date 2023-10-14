@@ -76,8 +76,8 @@ def get_split_attribute_and_value(data):
         temp_split_value = None
         temp_split_s1 = None
         temp_split_s2 = None
-        for value in attribute_values:
 
+        for value in attribute_values:
             s1, s2 = split_data(data, attribute, value)
             prob = len(s1) / len(data)
             value_gini = prob * calculate_gini(s1) + (1 - prob) * calculate_gini(s2)
@@ -88,7 +88,6 @@ def get_split_attribute_and_value(data):
                 temp_split_value = value  # split value of current attribute
                 temp_split_s1 = s1
                 temp_split_s2 = s2
-
 
         attribute_gini = min_value_gini
         attribute_split_value = temp_split_value
@@ -110,3 +109,18 @@ def get_split_attribute_and_value(data):
             # print(best_split_s2)
 
     return best_split_attribute_index, best_split_attribute_value, best_split_s1, best_split_s2
+
+def remove_zeros(my_list):
+    return [x for x in my_list if x != "0"]
+
+
+if __name__ == "__main__":
+    data = [[' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' >50K'], [' Male', ' <=50K'], [' Male', ' <=50K'],
+            [' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' <=50K'],
+            [' Male', ' <=50K'], [' Male', ' >50K'], [' Male', ' >50K'], [' Male', ' <=50K'], [' Male', ' >50K'],
+            [' Male', ' >50K'], [' Male', ' <=50K']]
+
+    split_attribute_index, split_attribute_value, s1, s2 = get_split_attribute_and_value(data)
+    print(split_attribute_index, split_attribute_value, s1, s2)
+    print(s1, len(s1))
+    print(s2, len(s2))

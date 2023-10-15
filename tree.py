@@ -1,6 +1,7 @@
 from node import Node
 from utils import get_split_attribute_and_value, get_majority_label, remove_zeros
 
+
 class DecisionTree:
     def __init__(self, root_node=None, attribute_list=None):
         self.root_node = root_node
@@ -9,16 +10,16 @@ class DecisionTree:
         self.node_list = []
 
     def recurrent_node(self, data):
-        # 最后一个属性时
-        # if len(data[0]) == 1:
-        if len(remove_zeros(data[0])) == 1:
+        """ Generate decision tree nodes recursively """
+
+        if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
             print("=========================================", data)
             node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]))
             self.node_list.append(node)
             self.num_node = self.num_node + 1
             return node
 
-        # 如果所有样本都属于同一label，则将当前节点标记为叶节点，并设置类别标签
+        # If all object belong to the same label, mark the current node as a leaf node and set a category label
         last_column = [row[-1] for row in data]
         if len(set(last_column)) == 1:
             node = Node(self.num_node, label=last_column[0])
@@ -29,7 +30,7 @@ class DecisionTree:
         split_attribute_index, split_attribute_value, s1, s2 = get_split_attribute_and_value(data)
         split_attribute = self.attribute_list[split_attribute_index]
 
-
+        # Any set of s1 or s2 is null
         if (len(remove_zeros(s1)) == 0) or (len(remove_zeros(s2)) == 0):
             if len(remove_zeros(s1)) == 0:
                 node = Node(self.num_node, label=get_majority_label([row[-1] for row in s2]))
@@ -41,29 +42,19 @@ class DecisionTree:
 
         node = Node(index=self.num_node, attribute=split_attribute, attribute_idx=split_attribute_index,
                     split_condition=split_attribute_value)
+
+        # root node of decision tree
         if self.num_node == 0:
             self.root_node = node
+
         self.node_list.append(node)
         self.num_node = self.num_node + 1
+        # print("index: ", self.num_node, "split_attribute: ", node.attribute, "split_attribute_value: ",
+        #       node.split_condition)
 
-        print("index: ", self.num_node, "split_attribute: ", node.attribute, "split_attribute_value: ",
-              node.split_condition)
-        # print("s1", s1)
-        # print("s2", s2)
-        # print("")
-
-        # if self.num_node != 0:
-        #     node.get_info()
-
-        # 让被删除的属性值为0，保持原有维度，和属性值对应
-        # s1 = [row[:split_attribute_index] + row[split_attribute_index + 1:] for row in s1]
-        # s2 = [row[:split_attribute_index] + row[split_attribute_index + 1:] for row in s2]
-
+        # Let the deleted attribute value be 0 to keep the original attribute dimension, and correspond to the attribute value
         s1 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s1]
         s2 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s2]
-        # print("s1: ", s1)
-        # print("s2: ", s2)
-        # print()
 
         node.left_node = self.recurrent_node(s1)
         node.right_node = self.recurrent_node(s2)
@@ -75,6 +66,7 @@ class DecisionTree:
             print(node.get_info())
 
     def classify(self, input):
+        """classify the input single object"""
         obj = input[:-1]  # remove obj label
         current_node = self.root_node
         while current_node.label is None:
@@ -95,6 +87,7 @@ class DecisionTree:
             return False
 
     def classify_dataset(self, input_dataset):
+        """classify the input dataset (object list)"""
         num_correct = 0
         for obj in input_dataset:
             res = self.classify(obj)
@@ -103,7 +96,8 @@ class DecisionTree:
         corr_rate = num_correct / len(input_dataset)
         return len(input_dataset), num_correct, corr_rate
 
-    def save_tree(self):
+    def get_tree_list(self):
+        """get the list of all decision tree nodes"""
         tree_list = []
         for node in self.node_list:
             tree_list.append(node.get_info())
@@ -111,10 +105,13 @@ class DecisionTree:
 
     @staticmethod
     def load_tree(node_list, attribute_list):
+        """load tree from the input node list"""
         tree = DecisionTree(attribute_list=attribute_list)
         tree.attribute_list = attribute_list
         tree.node_list = [None] * len(node_list)
 
+        # Traverse all nodes in reverse order
+        # Let the left and right nodes of the node be generated before this node
         node_list.reverse()
         for node in node_list:
             node_new = Node(index=node.get("index"), attribute=node.get("attribute"),

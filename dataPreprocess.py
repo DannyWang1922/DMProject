@@ -2,7 +2,7 @@ import fileinput
 
 
 def data_preprocess(inputFile):
-    # Data preprocess
+    """Data preprocess"""
     outData = ""
     for line in fileinput.input(files=inputFile):  # input data document
         lineSplit = line.split(",")
@@ -32,12 +32,7 @@ def data_preprocess(inputFile):
 
 
 def saveData(data, outPath):
-    # Data Writing output file
-    # inputFileName = os.path.basename(inputFilePreprocess)
-    # inputDirectory = os.path.dirname(inputFilePreprocess)
-    # outputFileName = inputFileName + ".preprocessed"
-    # outputPath = os.path.join(inputDirectory, outputFileName)
-
+    """Save data to txt file"""
     outputFile = open(outPath, "w")
     outputFile.write(str(data))
     outputFile.close()
@@ -45,7 +40,7 @@ def saveData(data, outPath):
 
 
 def loadData(inputFile):
-    # Read data
+    """Load data from txt file"""
     adultData = list()
     for line in fileinput.input(files=inputFile):
         line_split = line.split(",")

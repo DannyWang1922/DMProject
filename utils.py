@@ -1,5 +1,5 @@
 def calculate_gini(data):
-    """计算数据集的GINI指数"""
+    """Calculate the GINI of the input data """
     num_obj = len(data)
     label_count = {}
     for obj in data:
@@ -17,7 +17,7 @@ def calculate_gini(data):
 
 
 def get_majority_label(labels):
-    """多数表决，选择出现次数最多的类别"""
+    """Select the category that appears the most"""
     label_count = {}
     for label in labels:
         if label not in label_count:
@@ -32,7 +32,7 @@ def get_majority_label(labels):
 
 
 def split_data(data, attribute_index, attribute_value):
-    """根据特征值划分数据集"""
+    """Divide the data set according to the attribute value"""
     s1 = []
     s2 = []
     if attribute_value.isnumeric():  # Nominal Attribute
@@ -57,7 +57,7 @@ def split_data(data, attribute_index, attribute_value):
 
 
 def get_split_attribute_and_value(data):
-    """选择最佳划分特征"""
+    """Select the best partition feature"""
     num_attributes = len(data[0])
     min_attribute_gini = 1
     best_split_attribute_index = 0
@@ -115,6 +115,7 @@ def remove_zeros(my_list):
 
 
 if __name__ == "__main__":
+    # The following code just use for debug
     data = [[' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' >50K'], [' Male', ' <=50K'], [' Male', ' <=50K'],
             [' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' <=50K'], [' Male', ' <=50K'],
             [' Male', ' <=50K'], [' Male', ' >50K'], [' Male', ' >50K'], [' Male', ' <=50K'], [' Male', ' >50K'],

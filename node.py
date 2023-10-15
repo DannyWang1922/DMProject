@@ -9,21 +9,8 @@ class Node:
         self.right_node = right_node
         self.label = label
 
-    # def get_info(self):
-    #     if (self.left_node is None) or (self.right_node is None):
-    #         print("index:", self.index, "attribute:", self.attribute, "attribute_idx:", self.attribute_idx, "condition:", self.split_condition,
-    #               "label:", self.label)
-    #     elif self.right_node is None:
-    #         print("index:", self.index, "attribute:", self.attribute, "attribute_idx:", self.attribute_idx, "condition:", self.split_condition,
-    #               "label:", self.label, "left:", self.left_node.index)
-    #     elif self.left_node is None:
-    #         print("index:", self.index, "attribute:", self.attribute, "attribute_idx:", self.attribute_idx, "condition:", self.split_condition,
-    #               "label:", self.label, "right:", self.right_node.index)
-    #     else:
-    #         print("index:", self.index, "attribute:", self.attribute, "attribute_idx:", self.attribute_idx, "condition:", self.split_condition,
-    #               "label:", self.label, "left:", self.left_node.index,
-    #               "right:", self.right_node.index)
     def get_info(self):
+        """get node information"""
         node_info = {
             "index": self.index,
             "attribute": self.attribute,

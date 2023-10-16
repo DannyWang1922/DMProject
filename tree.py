@@ -13,7 +13,7 @@ class DecisionTree:
         """ Generate decision tree nodes recursively """
 
         if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
-            print("=========================================", data)
+            # print("=========================================", data)
             node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]))
             self.node_list.append(node)
             self.num_node = self.num_node + 1
@@ -51,6 +51,9 @@ class DecisionTree:
         self.num_node = self.num_node + 1
         # print("index: ", self.num_node, "split_attribute: ", node.attribute, "split_attribute_value: ",
         #       node.split_condition)
+
+        if self.num_node % 100 == 0:
+            print(self.num_node, " nodes is generated")
 
         # Let the deleted attribute value be 0 to keep the original attribute dimension, and correspond to the attribute value
         s1 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s1]

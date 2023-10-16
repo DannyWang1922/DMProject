@@ -18,7 +18,7 @@ def create_decision_tree(data, attribute_list):
         print("All samples belong to the same class")
         return label_list[0]
 
-    print("All samples do not belong to the same class")
+    # print("All samples do not belong to the same class")
 
     # All objects have the same value, or the number of S is too small
     flag = False
@@ -59,19 +59,20 @@ tree_txt = str(decision_tree.get_tree_list())
 with open('tree.txt', 'w') as f:
     f.write(tree_txt)
 
-print("Testing data preprocess------------------------------------------")
-preprocessedData = data_preprocess(inputFile='data/adult.test')
-saveData(preprocessedData, 'data/adult.clean_test')
-
-adultDataTest = loadData(inputFile='data/adult.clean_test')
-
-print("Loading tree from file------------------------------------------")
+print("Loading decision tree from file------------------------------------------")
 with open('tree.txt', 'r') as f:
     obj_str = f.read()
     node_list = eval(obj_str)
 decision_tree = DecisionTree.load_tree(node_list, attribute_list)
 
-print("run decision tree on test set------------------------------------------")
+print("Testing dataset preprocess------------------------------------------")
+preprocessedData = data_preprocess(inputFile='data/adult.test')
+saveData(preprocessedData, 'data/adult.clean_test')
+
+adultDataTest = loadData(inputFile='data/adult.clean_test')
+
+
+print("Running decision tree on test set------------------------------------------")
 num_obj, num_correct, corr_rate = decision_tree.classify_dataset(adultDataTest)
 
 print("The num of data set:", num_obj, " Number of correctly classified samples:", num_correct,

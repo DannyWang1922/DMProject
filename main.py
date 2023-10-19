@@ -3,6 +3,7 @@ from tree import DecisionTree
 from utils import get_majority_label, get_split_attribute_and_value
 from dataPreprocess import data_preprocess, saveData, loadData
 import sys
+import time
 sys.setrecursionlimit(100000)
 
 
@@ -31,10 +32,10 @@ def create_decision_tree(data, attribute_list):
         if flag:
             break
 
-    tree = DecisionTree(attribute_list=attribute_list)
+    tree = DecisionTree(attribute_list=attribute_list, maxLayer=17)
 
     print("Recursively generate all nodes")
-    tree.recurrent_node(data)
+    tree.recurrent_node(data, layer=0)
 
     return tree
 
@@ -50,16 +51,20 @@ saveData(preprocessedData, 'data/adult.clean_data')  # save  preprocessed data
 
 adultDataTrain = loadData(inputFile='data/adult.clean_data')  # loadData
 
+start_time = time.time()
 print("Built decision tree------------------------------------------")
 decision_tree = create_decision_tree(adultDataTrain, attribute_list)
+end_time = time.time()
+run_time = end_time - start_time
+print("Time for generating decision tree: ", run_time)
 
 print("Save decision tree to txt file------------------------------------------")
 tree_txt = str(decision_tree.get_tree_list())
-with open('tree_BackUp.txt', 'w') as f:
+with open('tree.txt', 'w') as f:
     f.write(tree_txt)
 
 print("Loading decision tree from file------------------------------------------")
-with open('tree_BackUp.txt', 'r') as f:
+with open('tree.txt', 'r') as f:
     obj_str = f.read()
     node_list = eval(obj_str)
 decision_tree = DecisionTree.load_tree(node_list, attribute_list)

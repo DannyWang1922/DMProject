@@ -1,6 +1,6 @@
 class Node:
     def __init__(self, index=None, attribute=None, attribute_idx=None,
-                 split_condition=None, left_node=None, right_node=None, label=None):
+                 split_condition=None, left_node=None, right_node=None, label=None, layer=None):
         self.index = index
         self.attribute = attribute
         self.attribute_idx = attribute_idx
@@ -8,6 +8,7 @@ class Node:
         self.left_node = left_node
         self.right_node = right_node
         self.label = label
+        self.layer = layer
 
     def get_info(self):
         """get node information"""
@@ -16,7 +17,8 @@ class Node:
             "attribute": self.attribute,
             "attribute_idx": self.attribute_idx,
             "split_condition": self.split_condition,
-            "label": self.label
+            "label": self.label,
+            "layer": self.layer
         }
         if self.left_node is not None:
             node_info["left"] = self.left_node.index

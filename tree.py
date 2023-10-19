@@ -3,13 +3,14 @@ from utils import get_split_attribute_and_value, get_majority_label, remove_zero
 
 
 class DecisionTree:
-    def __init__(self, root_node=None, attribute_list=None):
+    def __init__(self, root_node=None, attribute_list=None, maxLayer=20):
         self.root_node = root_node
         self.num_node = 0
         self.attribute_list = attribute_list
         self.node_list = []
+        self.maxLayer = maxLayer
 
-    def recurrent_node(self, data):
+    def recurrent_node(self, data, layer):
         """ Generate decision tree nodes recursively """
 
         # if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
@@ -24,10 +25,18 @@ class DecisionTree:
         # 90% 相同就返回 设置阈值
         last_column = [row[-1] for row in data]
         if len(set(last_column)) == 1:
-            node = Node(self.num_node, label=last_column[0])
+            node = Node(self.num_node, label=last_column[0], layer=layer)
             self.node_list.append(node)
             self.num_node = self.num_node + 1
             return node
+
+        # 限制最大的深度
+        if layer >= self.maxLayer:
+            node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]), layer=layer)
+            self.node_list.append(node)
+            self.num_node = self.num_node + 1
+            return node
+
 
         split_attribute_index, split_attribute_value, s1, s2 = get_split_attribute_and_value(data)
         split_attribute = self.attribute_list[split_attribute_index]
@@ -44,19 +53,21 @@ class DecisionTree:
 
         if (len(s1) == 0) or (len(s2) == 0):
             if len(s1) == 0:
-                node = Node(self.num_node, label=get_majority_label([row[-1] for row in s2]))
+                node = Node(self.num_node, label=get_majority_label([row[-1] for row in s2]), layer=layer)
             if len(s2) == 0:
-                node = Node(self.num_node, label=get_majority_label([row[-1] for row in s1]))
+                node = Node(self.num_node, label=get_majority_label([row[-1] for row in s1]), layer=layer)
             self.node_list.append(node)
             self.num_node = self.num_node + 1
             return node
 
         node = Node(index=self.num_node, attribute=split_attribute, attribute_idx=split_attribute_index,
-                    split_condition=split_attribute_value)
+                    split_condition=split_attribute_value, layer=layer)
+
 
         # root node of decision tree
         if self.num_node == 0:
             self.root_node = node
+
         self.node_list.append(node)
         self.num_node = self.num_node + 1
         # print("index: ", self.num_node, "split_attribute: ", node.attribute, "split_attribute_value: ",
@@ -69,8 +80,8 @@ class DecisionTree:
         # s1 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s1]
         # s2 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s2]
 
-        node.left_node = self.recurrent_node(s1)
-        node.right_node = self.recurrent_node(s2)
+        node.left_node = self.recurrent_node(s1, layer+1)
+        node.right_node = self.recurrent_node(s2, layer+1)
 
         return node
 

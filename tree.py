@@ -12,14 +12,16 @@ class DecisionTree:
     def recurrent_node(self, data):
         """ Generate decision tree nodes recursively """
 
-        if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
-            # print("=========================================", data)
-            node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]))
-            self.node_list.append(node)
-            self.num_node = self.num_node + 1
-            return node
+        # if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
+        #     # print("=========================================", data)
+        #     node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]))
+        #     self.node_list.append(node)
+        #     self.num_node = self.num_node + 1
+        #     return node
 
         # If all object belong to the same label, mark the current node as a leaf node and set a category label
+
+        # 90% 相同就返回 设置阈值
         last_column = [row[-1] for row in data]
         if len(set(last_column)) == 1:
             node = Node(self.num_node, label=last_column[0])
@@ -30,11 +32,20 @@ class DecisionTree:
         split_attribute_index, split_attribute_value, s1, s2 = get_split_attribute_and_value(data)
         split_attribute = self.attribute_list[split_attribute_index]
 
-        # Any set of s1 or s2 is null
-        if (len(remove_zeros(s1)) == 0) or (len(remove_zeros(s2)) == 0):
-            if len(remove_zeros(s1)) == 0:
+        # Any set of s1 or s2 is null (if all the objects in S have the same attribute values)
+        # if (len(remove_zeros(s1)) == 0) or (len(remove_zeros(s2)) == 0):
+        #     if len(remove_zeros(s1)) == 0:
+        #         node = Node(self.num_node, label=get_majority_label([row[-1] for row in s2]))
+        #     if len(remove_zeros(s2)) == 0:
+        #         node = Node(self.num_node, label=get_majority_label([row[-1] for row in s1]))
+        #     self.node_list.append(node)
+        #     self.num_node = self.num_node + 1
+        #     return node
+
+        if (len(s1) == 0) or (len(s2) == 0):
+            if len(s1) == 0:
                 node = Node(self.num_node, label=get_majority_label([row[-1] for row in s2]))
-            if len(remove_zeros(s2)) == 0:
+            if len(s2) == 0:
                 node = Node(self.num_node, label=get_majority_label([row[-1] for row in s1]))
             self.node_list.append(node)
             self.num_node = self.num_node + 1
@@ -46,18 +57,17 @@ class DecisionTree:
         # root node of decision tree
         if self.num_node == 0:
             self.root_node = node
-
         self.node_list.append(node)
         self.num_node = self.num_node + 1
         # print("index: ", self.num_node, "split_attribute: ", node.attribute, "split_attribute_value: ",
         #       node.split_condition)
 
-        if self.num_node % 100 == 0:
-            print(self.num_node, " nodes is generated")
+        # if self.num_node % 100 == 0:
+        #     print(self.num_node, " nodes is generated")
 
         # Let the deleted attribute value be 0 to keep the original attribute dimension, and correspond to the attribute value
-        s1 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s1]
-        s2 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s2]
+        # s1 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s1]
+        # s2 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s2]
 
         node.left_node = self.recurrent_node(s1)
         node.right_node = self.recurrent_node(s2)
@@ -74,7 +84,7 @@ class DecisionTree:
         current_node = self.root_node
         while current_node.label is None:
             if current_node.split_condition.isnumeric():  # Nominal Attribute
-                if obj[current_node.attribute_idx] < current_node.split_condition:
+                if obj[current_node.attribute_idx] <= current_node.split_condition:
                     current_node = current_node.left_node
                 else:
                     current_node = current_node.right_node

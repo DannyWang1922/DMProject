@@ -3,7 +3,6 @@ from tree import DecisionTree
 from utils import get_majority_label, get_split_attribute_and_value
 from dataPreprocess import data_preprocess, saveData, loadData
 import sys
-
 sys.setrecursionlimit(100000)
 
 
@@ -56,11 +55,11 @@ decision_tree = create_decision_tree(adultDataTrain, attribute_list)
 
 print("Save decision tree to txt file------------------------------------------")
 tree_txt = str(decision_tree.get_tree_list())
-with open('tree.txt', 'w') as f:
+with open('tree_BackUp.txt', 'w') as f:
     f.write(tree_txt)
 
 print("Loading decision tree from file------------------------------------------")
-with open('tree.txt', 'r') as f:
+with open('tree_BackUp.txt', 'r') as f:
     obj_str = f.read()
     node_list = eval(obj_str)
 decision_tree = DecisionTree.load_tree(node_list, attribute_list)

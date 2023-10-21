@@ -1,5 +1,5 @@
 from node import Node
-from utils import get_split_attribute_and_value, get_majority_label, remove_zeros
+from utils import get_split_attribute_and_value, get_majority_label, remove_zeros, count_label
 
 
 class DecisionTree:
@@ -13,16 +13,14 @@ class DecisionTree:
     def recurrent_node(self, data, layer):
         """ Generate decision tree nodes recursively """
 
-        # if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
-        #     # print("=========================================", data)
-        #     node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]))
-        #     self.node_list.append(node)
-        #     self.num_node = self.num_node + 1
-        #     return node
+        if len(remove_zeros(data[0])) == 1:  # Remove attributes that have been classified by remove_zeros function
+            # print("=========================================", data)
+            node = Node(self.num_node, label=get_majority_label([row[-1] for row in data]))
+            self.node_list.append(node)
+            self.num_node = self.num_node + 1
+            return node
 
         # If all object belong to the same label, mark the current node as a leaf node and set a category label
-
-        # 90% 相同就返回 设置阈值
         last_column = [row[-1] for row in data]
         if len(set(last_column)) == 1:
             node = Node(self.num_node, label=last_column[0], layer=layer)
@@ -36,7 +34,6 @@ class DecisionTree:
             self.node_list.append(node)
             self.num_node = self.num_node + 1
             return node
-
 
         split_attribute_index, split_attribute_value, s1, s2 = get_split_attribute_and_value(data)
         split_attribute = self.attribute_list[split_attribute_index]
@@ -63,7 +60,6 @@ class DecisionTree:
         node = Node(index=self.num_node, attribute=split_attribute, attribute_idx=split_attribute_index,
                     split_condition=split_attribute_value, layer=layer)
 
-
         # root node of decision tree
         if self.num_node == 0:
             self.root_node = node
@@ -73,15 +69,15 @@ class DecisionTree:
         # print("index: ", self.num_node, "split_attribute: ", node.attribute, "split_attribute_value: ",
         #       node.split_condition)
 
-        # if self.num_node % 100 == 0:
-        #     print(self.num_node, " nodes is generated")
+        if self.num_node % 100 == 0:
+            print(self.num_node, " nodes is generated")
 
         # Let the deleted attribute value be 0 to keep the original attribute dimension, and correspond to the attribute value
         # s1 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s1]
         # s2 = [row[:split_attribute_index] + ["0"] + row[split_attribute_index + 1:] for row in s2]
 
-        node.left_node = self.recurrent_node(s1, layer+1)
-        node.right_node = self.recurrent_node(s2, layer+1)
+        node.left_node = self.recurrent_node(s1, layer + 1)
+        node.right_node = self.recurrent_node(s2, layer + 1)
 
         return node
 

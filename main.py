@@ -32,7 +32,7 @@ def create_decision_tree(data, attribute_list):
         if flag:
             break
 
-    tree = DecisionTree(attribute_list=attribute_list, maxLayer=17)
+    tree = DecisionTree(attribute_list=attribute_list, maxLayer=14)
 
     print("Recursively generate all nodes")
     tree.recurrent_node(data, layer=0)

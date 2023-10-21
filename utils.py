@@ -113,6 +113,19 @@ def get_split_attribute_and_value(data):
 def remove_zeros(my_list):
     return [x for x in my_list if x != "0"]
 
+def count_label(labels):
+    """Select the category that appears the most"""
+    label_count = {}
+    for label in labels:
+        if label not in label_count:
+            label_count[label] = 0
+        label_count[label] = label_count[label] + 1
+
+    values = list(label_count.values())
+    first_value = values[0]
+    return first_value
+
+
 
 if __name__ == "__main__":
     # The following code just use for debug

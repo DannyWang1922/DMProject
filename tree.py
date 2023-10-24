@@ -102,19 +102,36 @@ class DecisionTree:
                     current_node = current_node.right_node
         # print("current_node.label", current_node.label, "input[-1]", input[-1])
         if current_node.label == input[-1]:
-            return True
+            return True, input
         else:
-            return False
+            return False, input
 
     def classify_dataset(self, input_dataset):
         """classify the input dataset (object list)"""
         num_correct = 0
+        mis_classify = ""
+        correct_classify = ""
         for obj in input_dataset:
-            res = self.classify(obj)
+            res, obj_record = self.classify(obj)
             if res:
                 num_correct = num_correct + 1
+                for i in obj_record:
+                    if i != obj_record[-1]:
+                        # the last element do not add ,
+                        correct_classify = correct_classify + str(i) + ","
+                    else:
+                        correct_classify = correct_classify + str(i)
+                correct_classify = correct_classify + "\n"
+            else:
+                for i in obj_record:
+                    if i != obj_record[-1]:
+                        mis_classify = mis_classify + str(i) + ","
+                    else:
+                        mis_classify = mis_classify + str(i)
+                mis_classify = mis_classify + "\n"
+
         corr_rate = num_correct / len(input_dataset)
-        return len(input_dataset), num_correct, corr_rate
+        return len(input_dataset), num_correct, corr_rate, correct_classify, mis_classify
 
     def get_tree_list(self):
         """get the list of all decision tree nodes"""

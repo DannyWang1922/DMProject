@@ -18,8 +18,6 @@ def create_decision_tree(data, attribute_list):
         print("All samples belong to the same class")
         return label_list[0]
 
-    # print("All samples do not belong to the same class")
-
     # All objects have the same value, or the number of S is too small
     flag = False
     for arr in range(len(attribute_list)):
@@ -38,7 +36,6 @@ def create_decision_tree(data, attribute_list):
     tree.recurrent_node(data, layer=0)
 
     return tree
-
 
 attribute_list = [
     'age', 'workclass', "fnlwgt", "education", "education-num", "marital-status", "occupation",
@@ -77,7 +74,13 @@ adultDataTest = loadData(inputFile='data/adult.clean_test')
 
 
 print("Running decision tree on test set------------------------------------------")
-num_obj, num_correct, corr_rate = decision_tree.classify_dataset(adultDataTest)
+num_obj, num_correct, corr_rate, correct_classify_str, mis_classify_str = decision_tree.classify_dataset(adultDataTest)
 
 print("The num of data set:", num_obj, " Number of correctly classified samples:", num_correct,
       " Classification accuracy:", corr_rate)
+
+with open('correct_classify.txt', 'w') as f:
+    f.write(correct_classify_str)
+
+with open('mis_classify.txt', 'w') as f:
+    f.write(mis_classify_str)

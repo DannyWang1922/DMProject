@@ -4,10 +4,11 @@ from utils import get_majority_label, get_split_attribute_and_value
 from dataPreprocess import data_preprocess, saveData, loadData
 import sys
 import time
+import argparse
+
 sys.setrecursionlimit(100000)
 
-
-def create_decision_tree(data, attribute_list):
+def create_decision_tree(data, attribute_list, max_layer):
     """Create decision tree by input dataset and attribute list"""
     label_list = [sample[-1] for sample in data]
     # print(label_list)
@@ -30,48 +31,65 @@ def create_decision_tree(data, attribute_list):
         if flag:
             break
 
-    tree = DecisionTree(attribute_list=attribute_list, maxLayer=14)
+    tree = DecisionTree(attribute_list=attribute_list, maxLayer=max_layer)
 
     print("Recursively generate all nodes")
     tree.recurrent_node(data, layer=0)
 
     return tree
 
+# python main.py --model_mode train --training_set data/adult.data  --testing_set data/adult.test --max_layer 14
+# python main.py --model_mode test --processed_testing_set data/adult.clean_test --tree tree.txt
+parser = argparse.ArgumentParser()
+
+parser.add_argument('--model_mode', type=str, default="train", help='Model mode, training mode or testing mode')
+parser.add_argument('--training_set', type=str, default="data/adult.data", help='Input training set file')
+parser.add_argument('--testing_set', type=str, default="data/adult.test", help='Input testing set file')
+parser.add_argument('--processed_testing_set', type=str, default="data/adult.clean_test",
+                    help='Input preprocessed testing set file')
+parser.add_argument('--tree', type=str, default="tree.txt", help='tree model file')
+
+parser.add_argument('--max_layer', type=int, default=14, help='Max Number of decision tree layers')
+
+args = parser.parse_args()
+
 attribute_list = [
     'age', 'workclass', "fnlwgt", "education", "education-num", "marital-status", "occupation",
     "relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "income"
 ]
 
-print("Training data preprocess ------------------------------------------")
-preprocessedData = data_preprocess(inputFile='data/adult.data')
-saveData(preprocessedData, 'data/adult.clean_data')  # save  preprocessed data
+if args.model_mode == "train":
+    print("Train mode ------------------------------------------")
+    print("Training data preprocess ------------------------------------------")
+    preprocessedData = data_preprocess(inputFile=args.training_set)
+    saveData(preprocessedData, 'data/adult.clean_data')  # save preprocessed training data
+    adultDataTrain = loadData(inputFile='data/adult.clean_data')  # load training Data
 
-adultDataTrain = loadData(inputFile='data/adult.clean_data')  # loadData
+    start_time = time.time()
+    print("Built decision tree------------------------------------------")
+    decision_tree = create_decision_tree(adultDataTrain, attribute_list, args.max_layer)
+    end_time = time.time()
+    run_time = end_time - start_time
+    print("Time for generating decision tree: ", run_time)
 
-start_time = time.time()
-print("Built decision tree------------------------------------------")
-decision_tree = create_decision_tree(adultDataTrain, attribute_list)
-end_time = time.time()
-run_time = end_time - start_time
-print("Time for generating decision tree: ", run_time)
+    print("Save decision tree to txt file------------------------------------------")
+    tree_txt = str(decision_tree.get_tree_list())
+    with open('tree.txt', 'w') as f:
+        f.write(tree_txt)
 
-print("Save decision tree to txt file------------------------------------------")
-tree_txt = str(decision_tree.get_tree_list())
-with open('tree.txt', 'w') as f:
-    f.write(tree_txt)
+    print("Testing dataset preprocess------------------------------------------")
+    preprocessedData = data_preprocess(inputFile=args.testing_set)
+    saveData(preprocessedData, 'data/adult.clean_test')  # save preprocessed testing data
+    adultDataTest = loadData(inputFile="data/adult.clean_test")  # load test Data
 
-print("Loading decision tree from file------------------------------------------")
-with open('tree.txt', 'r') as f:
-    obj_str = f.read()
-    node_list = eval(obj_str)
-decision_tree = DecisionTree.load_tree(node_list, attribute_list)
-
-print("Testing dataset preprocess------------------------------------------")
-preprocessedData = data_preprocess(inputFile='data/adult.test')
-saveData(preprocessedData, 'data/adult.clean_test')
-
-adultDataTest = loadData(inputFile='data/adult.clean_test')
-
+else:  # test mode
+    print("Test mode ------------------------------------------")
+    print("Loading decision tree from file------------------------------------------")
+    with open(args.tree, 'r') as f:
+        obj_str = f.read()
+        node_list = eval(obj_str)
+    decision_tree = DecisionTree.load_tree(node_list, attribute_list)
+    adultDataTest = loadData(inputFile=args.processed_testing_set)
 
 print("Running decision tree on test set------------------------------------------")
 num_obj, num_correct, corr_rate, correct_classify_str, mis_classify_str = decision_tree.classify_dataset(adultDataTest)
@@ -84,3 +102,4 @@ with open('correct_classify.txt', 'w') as f:
 
 with open('mis_classify.txt', 'w') as f:
     f.write(mis_classify_str)
+

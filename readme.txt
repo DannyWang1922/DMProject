@@ -5,6 +5,9 @@ How to run:
     For test mode (Just test Decision Tree in Test set ):
         python main.py --model_mode test --processed_testing_set data/adult.clean_test --tree tree.txt
 
+    For decision tree visualization:
+        python printTree.py > [outputfilename].txt
+
     The input parameters and their meanings:
         --model_mode:      type=str, default="train", help='Model mode: training mode or testing mode'
         --training_set:    type=str, default="data/adult.data", help='Input training set file'

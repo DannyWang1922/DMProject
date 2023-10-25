@@ -1,6 +1,6 @@
 How to run:
     For train mode (Data preprocess -> Building a Decision Tree -> Test Decision Tree in Test set ):
-        python main.py --model_mode train --training_set data/adult.data  --testing_set data/adult.test --max_layer 14
+        python main.py --model_mode train --training_set data/adult.data  --testing_set data/adult.test --max_layer 15
 
     For test mode (Just test Decision Tree in Test set ):
         python main.py --model_mode test --processed_testing_set data/adult.clean_test --tree tree.txt
@@ -14,7 +14,7 @@ How to run:
         --max_layer:       type=int, default=14, help='Max Number of decision tree layers'
 
     About the running Time:
-        We run this program in Macbook with M2 Max chip, and when the depth is 14, the required time is 354 seconds.
+        We run this program in Macbook with M2 Max chip, and when the depth is 15, the required time is 362 seconds.
         This time is just for your reference, for detail please see our project report.
 
         If you think the decision tree generation time is too long, please directly use the test mode to evaluate our model.

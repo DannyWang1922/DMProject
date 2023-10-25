@@ -48,7 +48,7 @@ parser.add_argument('--testing_set', type=str, default="data/adult.test", help='
 parser.add_argument('--processed_testing_set', type=str, default="data/adult.clean_test",
                     help='Input preprocessed testing set file')
 parser.add_argument('--tree', type=str, default="tree.txt", help='tree model file')
-parser.add_argument('--max_layer', type=int, default=14, help='Max Number of decision tree layers')
+parser.add_argument('--max_layer', type=int, default=15, help='Max Number of decision tree layers')
 
 args = parser.parse_args()
 
